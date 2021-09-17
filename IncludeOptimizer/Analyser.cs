@@ -6,6 +6,17 @@ using System.Linq;
 
 namespace IncludeOptimizer
 {
+  public class OptimizationSettings
+  {
+    public bool UseSharedPtrs { get; set; }
+  }
+
+  public class Declaration
+  {
+    public string Header { get; set; }
+    public string DeclarationBoby { get; set; }
+  }
+
   public class Analyser
   {
     string fileContent;
@@ -16,11 +27,11 @@ namespace IncludeOptimizer
     };
 
     List<string> customHeaders = new List<string>();
-    List<string> declarations = new List<string>();
+    List<Declaration> declarations = new List<Declaration>();
 
-    public List<string> Declarations { get => declarations; set => declarations = value; }
+    public List<Declaration> Declarations { get => declarations; set => declarations = value; }
 
-    public void Analyse(string filePath)
+    public void Analyse(string filePath, OptimizationSettings optimizationSettings)
     {
       fileContent = File.ReadAllText(filePath);
       splittedFileContent = fileContent
@@ -29,13 +40,13 @@ namespace IncludeOptimizer
         .ToArray();
       
       customHeaders = FindCustomHeaders(splittedFileContent);
-      var declarations = FindDeclarationsInFile(customHeaders);
+      Declarations = FindDeclarationsInFile(customHeaders);
       Debug.WriteLine("end!");
     }
 
-    private List<string> FindDeclarationsInFile(List<string> customHeaders)
+    private List<Declaration> FindDeclarationsInFile(List<string> customHeaders)
     {
-      var declarations = new List<string>();
+      var declarations = new List<Declaration>();
       foreach (var line in splittedFileContent)
       {
         var lineToProcess = line;//.Trim();
@@ -43,7 +54,8 @@ namespace IncludeOptimizer
         {
           if (lineToProcess.Contains(" "+header+ " "))
           {
-            declarations.Add(lineToProcess);
+            
+            declarations.Add(new Declaration() { Header = header, DeclarationBoby =  lineToProcess });
           }
         }
       }

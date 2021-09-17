@@ -22,7 +22,7 @@ namespace IncludeOptimizerWinFormsClient
     {
       var analyser = new Analyser();
 
-      var filePath = @"C:\Users\Koto\source\repos\IncludeOptimizerTestApp\IncludeOptimizerTestApp\InstType.h";
+      var filePath = @"F:\repos\IncludeOptimizer\IncludeOptimizerTestApp\InstType.h";
       analyser.Analyse(filePath);
 
       var applicator = new Applicator();
