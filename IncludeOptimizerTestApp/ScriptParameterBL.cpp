@@ -1,0 +1,111 @@
+/*!
+***************************************************************************
+* @file ScriptParameterBL.cpp
+* @author mbara@enformatic.eu
+* @brief Implementation for ScriptParameter class 
+* 
+* Copyright : Bruker Optik GmbH 2017
+* All rights reserved. 
+* 
+* Email :opusbugs@bruker.de
+*
+************************************************************************** 
+*/
+#include "stdafx.h"
+#include "ScriptParameterBL.h"
+
+namespace OddatBusinessLogic
+{
+
+  namespace Entities
+  {
+    ///////////////////////////////////////////////////////////////////////////
+    //
+    /// @brief Constructor
+    //
+    ///////////////////////////////////////////////////////////////////////////
+    ScriptParameter::ScriptParameter(void)
+    {
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    //
+    /// @brief Destructor
+    //
+    ///////////////////////////////////////////////////////////////////////////
+    ScriptParameter::~ScriptParameter(void)
+    {
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    //
+    /// @return script parameter
+    //
+    ///////////////////////////////////////////////////////////////////////////
+    std::string ScriptParameter::getScriptParameter() const
+    {
+      return m_scriptParameter;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    //
+    /// @brief set script parameter
+    //
+    ///////////////////////////////////////////////////////////////////////////
+    void ScriptParameter::setScriptParameter(const std::string& scriptParameter)
+    {
+      m_scriptParameter = scriptParameter;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    //
+    /// @return script parameter unique name
+    //
+    ///////////////////////////////////////////////////////////////////////////
+    const std::string ScriptParameter::getUniqueName() const
+    {
+      return m_scriptParameter;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    //
+    /// @brief set parameter name
+    //
+    ///////////////////////////////////////////////////////////////////////////
+    void ScriptParameter::setName(const std::string& newName)
+    {
+      setScriptParameter(newName);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    //
+    /// @return displayed name
+    //
+    ///////////////////////////////////////////////////////////////////////////
+    const std::string ScriptParameter::getDisplayedName() const
+    {
+      return m_scriptParameter;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    //
+    /// @return list of script parameter values
+    //
+    ///////////////////////////////////////////////////////////////////////////
+    Lists::EntityList<Entities::ScriptParameterValue> ScriptParameter::getScriptParameterValues()
+    {
+      return m_scriptParameterValues;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    //
+    /// @brief set list of script parameter values
+    //
+    ///////////////////////////////////////////////////////////////////////////
+    void ScriptParameter::setScriptParameterValues(Lists::EntityList<Entities::ScriptParameterValue> list)
+    {
+      m_scriptParameterValues = list;
+    }
+
+  }
+}
