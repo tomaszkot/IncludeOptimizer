@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -22,12 +23,14 @@ namespace IncludeOptimizerWinFormsClient
     {
       var analyser = new Analyser();
 
-      var filePath = @"F:\repos\IncludeOptimizer\IncludeOptimizerTestApp\InstType.h";
+      //var filePath = @"F:\repos\IncludeOptimizer\IncludeOptimizerTestApp\InstType.h";
+      var filePath = @"F:\repos\IncludeOptimizer\IncludeOptimizerTestApp\Company.h";
       var optimizationSettings = new OptimizationSettings();
       analyser.Analyse(filePath, optimizationSettings);
 
       var applicator = new Applicator();
       applicator.Apply(filePath, analyser.Declarations, optimizationSettings);
+      Debug.Assert(analyser.Declarations.Count == 1);
     }
   }
 }

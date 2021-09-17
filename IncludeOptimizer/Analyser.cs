@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace IncludeOptimizer
 {
+
   public class OptimizationSettings
   {
     public bool UseSharedPtrs { get; set; }
@@ -13,21 +15,22 @@ namespace IncludeOptimizer
 
   public class Declaration
   {
-    public string Header { get; set; }
-    public string DeclarationBody { get; set; }
-
-    public string MemberName 
+    public string Header { get; set; }//e.g.#include "Person.h"
+    public string Body { get; set; }//e.g. BL::Person m_persons;
+    public List<string> Namespaces { get; set; }//e.g. BL
+    public string Type { get; set; } //e.g. BL::Person
+    public string Class { get; set; } //e.g. Person
+    public string MemberName //e.g. m_persons
     {
-      get 
-      {
-        var memberName = DeclarationBody.Replace(Header, "");
-        return memberName.Trim();
-      }  
+      get;set;
+
     }
   }
 
   public class Analyser
   {
+    public const string MemberDeclarationRegex = @"(?<type>.*)\s(?<memberName>\w+)";
+
     string fileContent;
     string[] splittedFileContent;
 
@@ -63,18 +66,38 @@ namespace IncludeOptimizer
       Debug.WriteLine("end!");
     }
 
+    public Declaration ParseMemberDeclaration(string declarationLine)
+    {
+      var matches = Regex.Matches(declarationLine, MemberDeclarationRegex);
+      
+      var decl = new Declaration();
+      decl.Body = declarationLine;
+      decl.Header = "";
+      if (matches.Count > 0)
+      {
+        if (matches[0].Groups.Count > 2)
+        {
+          decl.Type = matches[0].Groups[1].Value;
+          decl.Class = decl.Type.Split("::".ToCharArray()).Last();
+          decl.MemberName = matches[0].Groups[2].Value;
+        }
+      }
+      return decl;
+    }
+
     public List<Declaration> FindDeclarations(List<string> customHeaders)
     {
       var declarations = new List<Declaration>();
-      foreach (var line in splittedFileContent)
+      foreach (var header in customHeaders)
       {
-        var lineToProcess = line;
-        
-        foreach (var header in customHeaders)
+        foreach (var line in splittedFileContent)
         {
+          var lineToProcess = line;
           if (lineToProcess.Contains(header+ " "))
           {
-            declarations.Add(new Declaration() { Header = header, DeclarationBody =  lineToProcess });
+            var dec = ParseMemberDeclaration(lineToProcess);
+            dec.Header = header;
+            declarations.Add(dec);
           }
         }
       }
