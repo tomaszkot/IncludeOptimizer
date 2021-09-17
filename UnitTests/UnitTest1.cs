@@ -32,6 +32,15 @@ namespace UnitTests
       return decl;
     }
 
+    //#include "Model.h"
+    [TestMethod]
+    public void TestInclude_Expressions()
+    {
+      var analyser = new Analyser();
+      var inc = analyser.ParseIncludeContent("#include \"Model.h\"");
+      Assert.AreEqual(inc, "Model.h");
+    }
+
     [TestMethod]
     public void TestDeclaration_Expressions()
     {

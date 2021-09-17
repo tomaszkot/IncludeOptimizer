@@ -25,12 +25,23 @@ namespace IncludeOptimizer
       get;set;
 
     }
+
+    public override string ToString()
+    {
+      return Body;
+    }
   }
 
   public class Analyser
   {
     public const string MemberDeclarationRegex = @"(?<type>.*)\s(?<memberName>\w+)";
-    public const string IncludeDeclarationRegex = @"\s*#include\s*<(?<type>.*)\s*>";
+    public const string IncludeDeclarationRegexGTLT = @"\s*#include\s*<(?<type>.*)\s*>";
+    public const string IncludeDeclarationRegexQuoted = "\\s*#include\\s*\"(?<type>.*)\\s*\"";
+
+    public string ResultsToString()
+    {
+      return string.Join("\r\n", Declarations.Select(i => i.ToString()));
+    }
 
     string fileContent;
     string[] splittedFileContent;
@@ -52,7 +63,7 @@ namespace IncludeOptimizer
       this.fileContent = fileContent;
       splittedFileContent = fileContent
               .Split("\r\n".ToCharArray())
-              .Where(i => !i.StartsWith("//")  && i.Trim().Any())
+              .Where(i => !i.Trim().StartsWith("//")  && i.Trim().Any())
               .ToArray();
 
       Analyse();
@@ -90,10 +101,9 @@ namespace IncludeOptimizer
       {
         foreach (var line in splittedFileContent)
         {
-          var lineToProcess = line;
-          if (lineToProcess.Contains(header))
+          if (!IsIncludeLine(line) && !IsClassDefLine(line) && line.Contains(header))
           {
-            var dec = ParseMemberDeclaration(lineToProcess);
+            var dec = ParseMemberDeclaration(line);
             if (!string.IsNullOrEmpty(dec.Type))
             {
               dec.Header = header;
@@ -112,9 +122,9 @@ namespace IncludeOptimizer
       foreach (var line in fileContent)
       {
         var lineToProcess = line.Trim();
-        if (lineToProcess.StartsWith("#include"))
+        if (IsIncludeLine(lineToProcess))
         {
-          var incContent = GetIncludeContent(lineToProcess);
+          var incContent = ParseIncludeContent(lineToProcess);
           if (!knownHeaders.Contains(incContent))
           {
             var includeBody = incContent.Replace(".h", "").Replace("\"", "");
@@ -126,13 +136,30 @@ namespace IncludeOptimizer
       return customHeaders;
     }
 
-    private string GetIncludeContent(string fullIncludeLine)
+    private static bool IsIncludeLine(string lineToProcess)
     {
-      var matches = Regex.Matches(fullIncludeLine, IncludeDeclarationRegex);
+      return lineToProcess.Trim().StartsWith("#include");
+    }
+
+    private static bool IsClassDefLine(string lineToProcess)
+    {
+      return lineToProcess.Trim().Contains("class ");
+    }
+
+    public string ParseIncludeContent(string fullIncludeLine)
+    {
+      var matches = Regex.Matches(fullIncludeLine, IncludeDeclarationRegexGTLT);
       if (matches.Count > 0 && matches[0].Groups.Count > 1)
       {
         return matches[0].Groups[1].Value.Trim();
       }
+
+      matches = Regex.Matches(fullIncludeLine, IncludeDeclarationRegexQuoted);
+      if (matches.Count > 0 && matches[0].Groups.Count > 1)
+      {
+        return matches[0].Groups[1].Value.Trim();
+      }
+
       return fullIncludeLine;
     }
   }

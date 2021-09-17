@@ -9,8 +9,7 @@ class InstType
   std::string m_name;
   Model model;
   //std::shared_ptr<std::vector<Model>> m_models;
-  //std::vector<Model> m_models;
-  //std::shared_ptr<List<Model>> m_models;
+  
 public:
 
   InstType();

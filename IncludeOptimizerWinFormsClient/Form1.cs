@@ -24,13 +24,15 @@ namespace IncludeOptimizerWinFormsClient
       var analyser = new Analyser();
 
       //var filePath = @"F:\repos\IncludeOptimizer\IncludeOptimizerTestApp\InstType.h";
-      var filePath = @"F:\repos\IncludeOptimizer\IncludeOptimizerTestApp\Company.h";
+      //var filePath = @"F:\repos\IncludeOptimizer\IncludeOptimizerTestApp\Company.h";
+      var filePath = @"F:\repos\IncludeOptimizer\IncludeOptimizerTestApp\ScriptParameterBL.h";
       var optimizationSettings = new OptimizationSettings();
       analyser.Analyse(filePath, optimizationSettings);
-
-      var applicator = new Applicator();
-      applicator.Apply(filePath, analyser.Declarations, optimizationSettings);
-      Debug.Assert(analyser.Declarations.Count == 1);
+      string res = analyser.ResultsToString();
+      MessageBox.Show(res);
+      //var applicator = new Applicator();
+      //applicator.Apply(filePath, analyser.Declarations, optimizationSettings);
+      //Debug.Assert(analyser.Declarations.Count == 1);
     }
   }
 }
