@@ -23,10 +23,11 @@ namespace IncludeOptimizerWinFormsClient
       var analyser = new Analyser();
 
       var filePath = @"F:\repos\IncludeOptimizer\IncludeOptimizerTestApp\InstType.h";
-      analyser.Analyse(filePath);
+      var optimizationSettings = new OptimizationSettings();
+      analyser.Analyse(filePath, optimizationSettings);
 
       var applicator = new Applicator();
-      applicator.Apply(filePath, analyser.Declarations);
+      applicator.Apply(filePath, analyser.Declarations, optimizationSettings);
     }
   }
 }
