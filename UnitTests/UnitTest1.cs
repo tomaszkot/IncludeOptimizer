@@ -11,7 +11,7 @@ namespace UnitTests
     [TestMethod]
     public void TestDeclaration_Expressions()
     {
-      string declaration = "BL::Person m_person ";
+      string declaration = "BL::Person m_person;";
       var analyser = new Analyser();
       var decl = analyser.ParseMemberDeclaration(declaration);
       Assert.AreEqual(decl.MemberName, "m_person");
@@ -48,10 +48,10 @@ namespace UnitTests
     [TestMethod]
     public void TestDeclaration_Many()
     {
-      string code = "#include <Person>" +
-        "\r\n#include <Boss>" +
-        "\r\nBL::Person m_person" +
-        "\r\nBL::Boss m_boss ";
+      string code = @"#include <Person>
+        #include <Boss>
+        BL::Person m_person;
+        BL::Boss m_boss; ";
       var analyser = new Analyser();
       analyser.Analyse(code);
       var found = analyser.Declarations;

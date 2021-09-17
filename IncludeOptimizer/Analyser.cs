@@ -30,6 +30,7 @@ namespace IncludeOptimizer
   public class Analyser
   {
     public const string MemberDeclarationRegex = @"(?<type>.*)\s(?<memberName>\w+)";
+    public const string IncludeDeclarationRegex = @"\s*#include\s*<(?<type>.*)\s*>";
 
     string fileContent;
     string[] splittedFileContent;
@@ -77,9 +78,9 @@ namespace IncludeOptimizer
       {
         if (matches[0].Groups.Count > 2)
         {
-          decl.Type = matches[0].Groups[1].Value;
-          decl.Class = decl.Type.Split("::".ToCharArray()).Last();
-          decl.MemberName = matches[0].Groups[2].Value;
+          decl.Type = matches[0].Groups[1].Value.Trim();
+          decl.Class = decl.Type.Split("::".ToCharArray()).Last().Trim();
+          decl.MemberName = matches[0].Groups[2].Value.Trim();
         }
       }
       return decl;
@@ -129,10 +130,12 @@ namespace IncludeOptimizer
 
     private string GetIncludeContent(string fullIncludeLine)
     {
-      var line = fullIncludeLine.Replace("#include", "");
-      line = line.Replace("<", "");
-      line = line.Replace(">", "");
-      return line.Trim();
+      var matches = Regex.Matches(fullIncludeLine, IncludeDeclarationRegex);
+      if (matches.Count > 0 && matches[0].Groups.Count > 1)
+      {
+        return matches[0].Groups[1].Value.Trim();
+      }
+      return fullIncludeLine;
     }
   }
 }
