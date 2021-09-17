@@ -35,14 +35,11 @@ namespace IncludeOptimizer
     string fileContent;
     string[] splittedFileContent;
 
-    List<string> knownHeaders = new List<string>() { 
-    "memory", "vector", "string", 
-    };
+    List<string> knownHeaders = new List<string>() { "memory", "vector", "string", "set", "memory", "algorithm"};
 
     List<string> customHeaders = new List<string>();
-    List<Declaration> declarations = new List<Declaration>();
-
-    public List<Declaration> Declarations { get => declarations; set => declarations = value; }
+    
+    public List<Declaration> Declarations { get ; set ; }
 
     public void Analyse(string filePath, OptimizationSettings optimizationSettings)
     {
@@ -52,6 +49,7 @@ namespace IncludeOptimizer
 
     public void Analyse(string fileContent)
     {
+      this.fileContent = fileContent;
       splittedFileContent = fileContent
               .Split("\r\n".ToCharArray())
               .Where(i => !i.StartsWith("//")  && i.Trim().Any())
@@ -64,7 +62,6 @@ namespace IncludeOptimizer
     {
       customHeaders = FindCustomHeaders(splittedFileContent);
       Declarations = FindDeclarations(customHeaders);
-      Debug.WriteLine("end!");
     }
 
     public Declaration ParseMemberDeclaration(string declarationLine)
@@ -94,11 +91,14 @@ namespace IncludeOptimizer
         foreach (var line in splittedFileContent)
         {
           var lineToProcess = line;
-          if (lineToProcess.Contains(header+ " "))
+          if (lineToProcess.Contains(header))
           {
             var dec = ParseMemberDeclaration(lineToProcess);
-            dec.Header = header;
-            declarations.Add(dec);
+            if (!string.IsNullOrEmpty(dec.Type))
+            {
+              dec.Header = header;
+              declarations.Add(dec);
+            }
           }
         }
       }
@@ -119,8 +119,6 @@ namespace IncludeOptimizer
           {
             var includeBody = incContent.Replace(".h", "").Replace("\"", "");
             customHeaders.Add(includeBody);
-            int k = 0;
-            k++;
           }
         }
       }
