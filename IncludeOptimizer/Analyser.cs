@@ -10,7 +10,7 @@ namespace IncludeOptimizer
 
   public class OptimizationSettings
   {
-    public bool UseSharedPtrs { get; set; }
+    public bool UseSharedPtrs { get; set; } = true;
   }
 
   public class Declaration
@@ -34,7 +34,8 @@ namespace IncludeOptimizer
 
   public class Analyser
   {
-    public const string MemberDeclarationRegex = @"(?<type>.*)\s(?<memberName>\w+)";
+    public const string TypeDeclaration = @"(?<type>[\w:]+)\s+";
+    public const string MemberDeclarationRegex = TypeDeclaration+@"(?<memberName>\w+)\s*;";
     public const string IncludeDeclarationRegexGTLT = @"\s*#include\s*<(?<type>.*)\s*>";
     public const string IncludeDeclarationRegexQuoted = "\\s*#include\\s*\"(?<type>.*)\\s*\"";
 
@@ -52,8 +53,11 @@ namespace IncludeOptimizer
     
     public List<Declaration> Declarations { get ; set ; }
 
+    OptimizationSettings optimizationSettings;
+
     public void Analyse(string filePath, OptimizationSettings optimizationSettings)
     {
+      this.optimizationSettings = optimizationSettings;
       fileContent = File.ReadAllText(filePath);
       Analyse(fileContent);
     }
@@ -136,12 +140,12 @@ namespace IncludeOptimizer
       return customHeaders;
     }
 
-    private static bool IsIncludeLine(string lineToProcess)
+    public static bool IsIncludeLine(string lineToProcess)
     {
       return lineToProcess.Trim().StartsWith("#include");
     }
 
-    private static bool IsClassDefLine(string lineToProcess)
+    public static bool IsClassDefLine(string lineToProcess)
     {
       return lineToProcess.Trim().Contains("class ");
     }
