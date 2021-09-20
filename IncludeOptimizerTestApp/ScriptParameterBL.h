@@ -1,16 +1,3 @@
-/*!
-***************************************************************************
-* @file ScriptParameterBL.h
-* @author mbara@enformatic.eu
-* @brief Header for ScriptParameter class 
-* 
-* Copyright : Bruker Optik GmbH 2017
-* All rights reserved. 
-* 
-* Email :opusbugs@bruker.de
-*
-************************************************************************** 
-*/
 #pragma once
 #include "ScriptParameterValueBL.h"
 #include "../Lists/EntityList.h"

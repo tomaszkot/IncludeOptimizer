@@ -1,16 +1,3 @@
-/*!
-***************************************************************************
-* @file ScriptParameterBL.cpp
-* @author mbara@enformatic.eu
-* @brief Implementation for ScriptParameter class 
-* 
-* Copyright : Bruker Optik GmbH 2017
-* All rights reserved. 
-* 
-* Email :opusbugs@bruker.de
-*
-************************************************************************** 
-*/
 #include "stdafx.h"
 #include "ScriptParameterBL.h"
 
