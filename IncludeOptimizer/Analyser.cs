@@ -46,12 +46,14 @@ namespace IncludeOptimizer
 
     string fileContent;
     string[] splittedFileContent;
+    string[] includesToAdd = new string[0];
 
     List<string> knownHeaders = new List<string>() { "memory", "vector", "string", "set", "memory", "algorithm"};
 
     List<string> customHeaders = new List<string>();
     
     public List<Declaration> Declarations { get ; set ; }
+    public string[] IncludesToAdd { get => includesToAdd; set => includesToAdd = value; }
 
     OptimizationSettings optimizationSettings;
 
@@ -101,11 +103,19 @@ namespace IncludeOptimizer
     public List<Declaration> FindDeclarations(List<string> customHeaders)
     {
       var declarations = new List<Declaration>();
+
+      List<string> includesToAdd = new List<string>() 
+      { 
+        "#include <memory>" 
+      };
       foreach (var header in customHeaders)
       {
         foreach (var line in splittedFileContent)
         {
-          if (!IsIncludeLine(line) && !IsClassDefLine(line) && line.Contains(header))
+          var isInc = IsIncludeLine(line);
+          if (isInc && line.Contains("<memory>"))
+            includesToAdd.Remove("memory");
+          if (!isInc && !IsClassDefLine(line) && line.Contains(header))
           {
             var dec = ParseMemberDeclaration(line);
             if (!string.IsNullOrEmpty(dec.Type))
@@ -116,7 +126,7 @@ namespace IncludeOptimizer
           }
         }
       }
-
+      this.includesToAdd = includesToAdd.ToArray();
       return declarations;
     }
         

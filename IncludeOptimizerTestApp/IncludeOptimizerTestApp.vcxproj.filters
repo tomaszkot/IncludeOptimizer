@@ -18,30 +18,39 @@
     <ClCompile Include="IncludeOptimizerTestApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="InstType.cpp">
+    <ClCompile Include="Input\Company.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
+    <ClCompile Include="Input\Person.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Person.cpp">
+    <ClCompile Include="Input\Car.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Company.cpp">
+    <ClCompile Include="Input\SteeringWheel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Output\Car.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="InstType.h">
+    <ClInclude Include="Input\Company.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Model.h">
+    <ClInclude Include="Input\Person.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Person.h">
+    <ClInclude Include="Input\Car.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Company.h">
+    <ClInclude Include="Input\SteeringWheel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Output\Car.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Output\SteeringWheel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

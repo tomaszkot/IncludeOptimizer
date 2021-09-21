@@ -24,7 +24,7 @@ namespace UnitTests
       var analyser = new Analyser();
       analyser.Analyse(input);
       var applicator = new Applicator();
-      return applicator.ApplyToString(input, analyser.Declarations, optimizationSettings);
+      return applicator.ApplyToString(input, analyser, optimizationSettings);
     }
 
     Declaration ParseCode(string code)

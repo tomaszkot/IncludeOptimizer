@@ -139,17 +139,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Company.cpp" />
+    <ClCompile Include="Input\Car.cpp" />
+    <ClCompile Include="Input\Company.cpp" />
     <ClCompile Include="IncludeOptimizerTestApp.cpp" />
-    <ClCompile Include="InstType.cpp" />
-    <ClCompile Include="Model.cpp" />
-    <ClCompile Include="Person.cpp" />
+    <ClCompile Include="Input\Person.cpp" />
+    <ClCompile Include="Input\SteeringWheel.cpp" />
+    <ClCompile Include="Output\Car.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Company.h" />
-    <ClInclude Include="InstType.h" />
-    <ClInclude Include="Model.h" />
-    <ClInclude Include="Person.h" />
+    <ClInclude Include="Input\Car.h" />
+    <ClInclude Include="Input\Company.h" />
+    <ClInclude Include="Input\Person.h" />
+    <ClInclude Include="Input\SteeringWheel.h" />
+    <ClInclude Include="Output\Car.h" />
+    <ClInclude Include="Output\SteeringWheel.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
