@@ -47,10 +47,10 @@
     <ClInclude Include="Input\SteeringWheel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Output\Car.h">
+    <ClInclude Include="Output\SteeringWheel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Output\SteeringWheel.h">
+    <ClInclude Include="Output\Car.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

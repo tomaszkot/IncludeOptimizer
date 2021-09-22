@@ -18,13 +18,13 @@ namespace UnitTests
       return found;
     }
 
-    string Convert(string input)
+    string Convert(string input, bool implFile)
     {
       var optimizationSettings = new OptimizationSettings();
       var analyser = new Analyser();
       analyser.Analyse(input);
       var applicator = new Applicator();
-      return applicator.ApplyToString(input, analyser, optimizationSettings);
+      return applicator.ApplyToString(input, analyser, optimizationSettings, implFile);
     }
 
     Declaration ParseCode(string code)
@@ -40,8 +40,7 @@ namespace UnitTests
       Assert.IsNotNull(decl);
       return decl;
     }
-
-    //#include "Model.h"
+        
     [TestMethod]
     public void TestInclude_Expressions()
     {
@@ -57,6 +56,28 @@ namespace UnitTests
       Assert.AreEqual(decl.MemberName, "m_person");
       Assert.AreEqual(decl.Type, "BL::Person");
       Assert.AreEqual(decl.Class, "Person");
+    }
+
+    [TestMethod]
+    public void Test_ImplFileMemberUsage()
+    {
+      var applicator = new Applicator();
+      var res = applicator.ConvertMemberUsage("m_person", "m_person.foo();");
+      Assert.AreEqual(res, "m_person->foo();");
+    }
+
+    [TestMethod]
+    public void Test_ImplFile()
+    {
+      var header = "#include <Person>\r\nBL::Person m_person; ";
+      
+      var optimizationSettings = new OptimizationSettings();
+      var analyser = new Analyser();
+      analyser.Analyse(header);
+      
+      var applicator = new Applicator();
+      var result = applicator.ApplyToString("m_person.foo();", analyser, optimizationSettings, true);
+      Assert.AreEqual(result, "m_person->foo();");
     }
 
     [TestMethod]
@@ -83,9 +104,10 @@ namespace UnitTests
       string code = @"#include <Person>
 
 BL::Person m_person;";
-      var result = Convert(code);
+      var result = Convert(code, false);
 
       string expectedResult = @"#include <Person>
+#include <memory>
 
 std::shared_ptr<BL::Person> m_person;";
 
@@ -109,10 +131,11 @@ std::shared_ptr<BL::Person> m_person;";
       Assert.AreEqual(decls[1].Type, "BL::Boss");
       Assert.AreEqual(decls[1].Class, "Boss");
 
-      var result =  Convert(code);
+      var result =  Convert(code, false);
 
       string expectedResult = @"#include <Person>
         #include <Boss>
+#include <memory>
 
         std::shared_ptr<BL::Person> m_person;
         std::shared_ptr<BL::Boss> m_boss; ";

@@ -2,11 +2,11 @@
 //
 
 #include <iostream>
-#include "InstType.h"
+//#include "InstType.h"
 
 int main()
 {
     std::cout << "Hello World!\n";
 
-    InstType instType;
+    //InstType instType;
 }

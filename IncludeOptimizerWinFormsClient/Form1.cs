@@ -26,7 +26,7 @@ namespace IncludeOptimizerWinFormsClient
       //var filePath = @"F:\repos\IncludeOptimizer\IncludeOptimizerTestApp\InstType.h";
       var fileName = "Car.h";
       var filePathBase = @"F:\repos\IncludeOptimizer\IncludeOptimizerTestApp\";
-      var inputFilePath = filePathBase+"/Input/";//
+      var inputFilePath = filePathBase+"/Input/";
       inputFilePath += fileName;
       var outputFilePath = filePathBase + "/Output/"+ fileName;
       //var filePath = @"F:\repos\IncludeOptimizer\IncludeOptimizerTestApp\ScriptParameterBL.h";

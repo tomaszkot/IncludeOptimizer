@@ -3,6 +3,13 @@
 
 class Car
 {
+
+private:
   SteeringWheel m_steeringWheel;
+
+public:
+  Car();
+
+  
 };
 
