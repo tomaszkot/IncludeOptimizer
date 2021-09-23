@@ -16,10 +16,12 @@ namespace IncludeOptimizer
       int lastIncludeIndex = 0;
       int index = 0;
       var replaced = false;
+      var forwardDeclarations = new List<string>();
 
       foreach (var line in lines)
       {
         var res = line;
+        var add = true;
 
         if (implFile)
         {
@@ -28,7 +30,7 @@ namespace IncludeOptimizer
             res = line;
             foreach (var decl in analyser.Declarations)
             {
-              if (line.Contains(decl.MemberName+"."))
+              if (line.Contains(decl.MemberName + "."))
               {
                 res = ConvertMemberUsage(decl.MemberName, res);
               }
@@ -38,33 +40,49 @@ namespace IncludeOptimizer
         else
         {
           var isInc = Analyser.IsIncludeLine(line);
-          if (isInc)
-            lastIncludeIndex = index;
-          if (line.Trim().Any() && !isInc && !Analyser.IsClassDefLine(line))
+          
+          if (line.Trim().Any() && !Analyser.IsClassDefLine(line))
           {
             foreach (var decl in analyser.Declarations)
             {
               if (line.Contains(decl.Header))
               {
+                if (isInc)
+                {
+                  var fd = "class " + decl.Type + ";";
+                  forwardDeclarations.Add(fd);
+                  add = false;
+                  break;
+                }
                 var toReplace = " " + decl.Header + " ";
                 var replacerKind = optimizationSettings.UseSharedPtrs ? "std::shared_ptr" : "std::unique_ptr";
                 res = line.Replace(decl.Type, replacerKind + "<" + decl.Type + ">");
+                
                 replaced = true;
                 break;
               }
             }
           }
+
+          if (isInc && add)
+          {
+            lastIncludeIndex = index;
+          }
         }
 
         index++;
-        result.Add(res);
+        if(add)
+          result.Add(res);
       }
 
       if (replaced)
       {
-        result.InsertRange(lastIncludeIndex+1, analyser.IncludesToAdd);
+        result.InsertRange(lastIncludeIndex, analyser.IncludesToAdd);
+        var nextInd = lastIncludeIndex + analyser.IncludesToAdd.Length;
+        result.InsertRange(nextInd, forwardDeclarations);
+        //result.Insert(nextInd+forwardDeclarations.Count, Environment.NewLine);
       }
-      return string.Join("\r\n", result);
+      return string.Join(Environment.NewLine, result);
     }
 
     public void Apply(string inputFilePath, string outputFilePath, Analyser analyser, OptimizationSettings optimizationSettings)

@@ -102,13 +102,11 @@ namespace UnitTests
     public void TestDeclaration_Replace()
     {
       string code = @"#include <Person>
-
 BL::Person m_person;";
       var result = Convert(code, false);
 
-      string expectedResult = @"#include <Person>
-#include <memory>
-
+      string expectedResult = @"#include <memory>
+class BL::Person;
 std::shared_ptr<BL::Person> m_person;";
 
       Assert.AreEqual(expectedResult, result);
@@ -118,10 +116,9 @@ std::shared_ptr<BL::Person> m_person;";
     public void TestDeclaration_Many()
     {
       string code = @"#include <Person>
-        #include <Boss>
-
-        BL::Person m_person;
-        BL::Boss m_boss; ";
+#include <Boss>
+BL::Person m_person;
+BL::Boss m_boss; ";
       var decls = GetDeclarations(code, 2);
       Assert.AreEqual(decls[0].MemberName, "m_person");
       Assert.AreEqual(decls[0].Type, "BL::Person");
@@ -133,12 +130,11 @@ std::shared_ptr<BL::Person> m_person;";
 
       var result =  Convert(code, false);
 
-      string expectedResult = @"#include <Person>
-        #include <Boss>
-#include <memory>
-
-        std::shared_ptr<BL::Person> m_person;
-        std::shared_ptr<BL::Boss> m_boss; ";
+      string expectedResult = @"#include <memory>
+class BL::Person;
+class BL::Boss;
+std::shared_ptr<BL::Person> m_person;
+std::shared_ptr<BL::Boss> m_boss; ";
 
       Assert.AreEqual(expectedResult, result);
     }

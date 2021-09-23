@@ -1,6 +1,8 @@
 #pragma once
-#include "SteeringWheel.h"
+
 #include <memory>
+class SteeringWheel;
+
 
 class Car
 {
