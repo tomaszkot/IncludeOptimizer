@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Output\app.cpp" />
     <ClCompile Include="Input\Car.cpp" />
     <ClCompile Include="Input\Company.cpp" />
     <ClCompile Include="IncludeOptimizerTestApp.cpp" />
@@ -147,6 +148,7 @@
     <ClCompile Include="Output\Car.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Output\app.h" />
     <ClInclude Include="Input\Car.h" />
     <ClInclude Include="Input\Company.h" />
     <ClInclude Include="Input\Person.h" />

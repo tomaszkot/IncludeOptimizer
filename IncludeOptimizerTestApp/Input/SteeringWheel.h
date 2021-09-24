@@ -1,7 +1,10 @@
 #pragma once
-class SteeringWheel
-{
-public:
-  void foo() {}
-};
 
+namespace Cars
+{
+  class SteeringWheel
+  {
+  public:
+    void foo() {}
+  };
+}

@@ -1,15 +1,17 @@
 #pragma once
 #include "SteeringWheel.h"
 
-class Car
+namespace Cars
 {
+  class Car
+  {
 
-private:
-  SteeringWheel m_steeringWheel;
+  private:
+    Cars::SteeringWheel m_steeringWheel;
 
-public:
-  Car();
+  public:
+    Car();
 
-  
-};
 
+  };
+}

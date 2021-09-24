@@ -96,7 +96,15 @@ namespace IncludeOptimizer
         if (matches[0].Groups.Count > 2)
         {
           decl.Type = matches[0].Groups[1].Value.Trim();
-          decl.Class = decl.Type.Split("::".ToCharArray()).Last().Trim();
+
+          var typeParts = decl.Type.Split("::".ToCharArray());
+          
+          decl.Class = typeParts.Last().Trim();
+          decl.Namespaces = typeParts.ToList();
+          decl.Namespaces.Remove(decl.Class);
+          while(decl.Namespaces.Contains(""))
+            decl.Namespaces.Remove("");
+
           decl.MemberName = matches[0].Groups[2].Value.Trim();
         }
       }
@@ -127,6 +135,7 @@ namespace IncludeOptimizer
             {
               dec.Header = header;
               declarations.Add(dec);
+              
               implIncludesToAdd.Add("#include "+ "\""+header+".h"+"\"");
             }
           }

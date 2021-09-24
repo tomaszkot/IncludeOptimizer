@@ -1,18 +1,18 @@
+#include <memory>
+namespace Cars{class SteeringWheel;};
 #pragma once
 
-#include <memory>
-class SteeringWheel;
-
-
-class Car
+namespace Cars
 {
+  class Car
+  {
 
-private:
-  std::shared_ptr<SteeringWheel> m_steeringWheel;
+  private:
+    std::shared_ptr<Cars::SteeringWheel> m_steeringWheel;
 
-public:
-  Car();
+  public:
+    Car();
 
-  
-};
 
+  };
+}

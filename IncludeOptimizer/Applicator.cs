@@ -77,7 +77,17 @@ namespace IncludeOptimizer
           {
             if (isInc)
             {
-              var fd = "class " + decl.Type + ";";
+              var fd = "";// 
+              foreach (var namesp in decl.Namespaces)
+              {
+                fd += "namespace " + namesp + "{";
+              }
+              fd += "class " + decl.Class + ";";
+              foreach (var namesp in decl.Namespaces)
+                fd += "}";
+
+              fd += ";";
+
               forwardDeclarations.Add(fd);
               add = false;
               break;

@@ -107,7 +107,7 @@ BL::Person m_person;";
       var result = Convert(code, false);
 
       string expectedResult = @"#include <memory>
-class BL::Person;
+namespace BL{class Person;};
 std::shared_ptr<BL::Person> m_person;";
 
       Assert.AreEqual(expectedResult, result);
@@ -132,8 +132,8 @@ BL::Boss m_boss; ";
       var result =  Convert(code, false);
 
       string expectedResult = @"#include <memory>
-class BL::Person;
-class BL::Boss;
+namespace BL{class Person;};
+namespace BL{class Boss;};
 std::shared_ptr<BL::Person> m_person;
 std::shared_ptr<BL::Boss> m_boss; ";
 

@@ -1,6 +1,9 @@
+#include "SteeringWheel.h"
 #include "Car.h"
-
-Car::Car()
+namespace Cars
 {
-  m_steeringWheel->foo();
+  Car::Car()
+  {
+    m_steeringWheel->foo();
+  }
 }
