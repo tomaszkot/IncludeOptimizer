@@ -29,7 +29,7 @@ namespace IncludeOptimizer
 
         if (implFile)
         {
-          lineToAdd = ApplyToImplFile(line);
+          lineToAdd = ApplyToImplFile(line, ref replaced);
         }
         else
         {
@@ -49,9 +49,16 @@ namespace IncludeOptimizer
 
       if (replaced)
       {
-        result.InsertRange(lastIncludeIndex, analyser.IncludesToAdd);
-        var nextInd = lastIncludeIndex + analyser.IncludesToAdd.Length;
-        result.InsertRange(nextInd, forwardDeclarations);
+        if (implFile)
+        {
+          result.InsertRange(lastIncludeIndex, analyser.ImplIncludesToAdd);
+        }
+        else
+        {
+          result.InsertRange(lastIncludeIndex, analyser.HeaderIncludesToAdd);
+          var nextInd = lastIncludeIndex + analyser.HeaderIncludesToAdd.Length;
+          result.InsertRange(nextInd, forwardDeclarations);
+        }
         //result.Insert(nextInd+forwardDeclarations.Count, Environment.NewLine);
       }
       return string.Join(Environment.NewLine, result);
@@ -90,7 +97,7 @@ namespace IncludeOptimizer
       return add;
     }
 
-    private string ApplyToImplFile(string line)
+    private string ApplyToImplFile(string line, ref bool replaced)
     {
       var res = "";
       if (line.Trim().Any())
@@ -101,6 +108,7 @@ namespace IncludeOptimizer
           if (line.Contains(decl.MemberName + "."))
           {
             res = ConvertMemberUsage(decl.MemberName, res);
+            replaced = true;
           }
         }
       }

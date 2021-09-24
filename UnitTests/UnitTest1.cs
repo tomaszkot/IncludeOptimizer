@@ -69,7 +69,7 @@ namespace UnitTests
     [TestMethod]
     public void Test_ImplFile()
     {
-      var header = "#include <Person>\r\nBL::Person m_person; ";
+      var header = "#include \"Person.h\"\r\nBL::Person m_person; ";
       
       var optimizationSettings = new OptimizationSettings();
       var analyser = new Analyser();
@@ -77,7 +77,8 @@ namespace UnitTests
       
       var applicator = new Applicator();
       var result = applicator.ApplyToString("m_person.foo();", analyser, true);
-      Assert.AreEqual(result, "m_person->foo();");
+      var exp = "#include \"Person.h\"\r\nm_person->foo();";
+      Assert.AreEqual(result, exp);
     }
 
     [TestMethod]

@@ -46,14 +46,16 @@ namespace IncludeOptimizer
 
     string fileContent;
     string[] splittedFileContent;
-    string[] includesToAdd = new string[0];
+    string[] headerIncludesToAdd = new string[0];
+    string[] implIncludesToAdd = new string[0];
 
     List<string> knownHeaders = new List<string>() { "memory", "vector", "string", "set", "memory", "algorithm"};
 
     List<string> customHeaders = new List<string>();
     
     public List<Declaration> Declarations { get ; set ; }
-    public string[] IncludesToAdd { get => includesToAdd; set => includesToAdd = value; }
+    public string[] HeaderIncludesToAdd { get => headerIncludesToAdd; set => headerIncludesToAdd = value; }
+    public string[] ImplIncludesToAdd { get => implIncludesToAdd; set => implIncludesToAdd = value; }
     public OptimizationSettings OptimizationSettings { get => optimizationSettings; set => optimizationSettings = value; }
 
     OptimizationSettings optimizationSettings = new OptimizationSettings();
@@ -109,6 +111,8 @@ namespace IncludeOptimizer
       { 
         "#include <memory>" 
       };
+      List<string> implIncludesToAdd = new List<string>();
+
       foreach (var header in customHeaders)
       {
         foreach (var line in splittedFileContent)
@@ -123,11 +127,13 @@ namespace IncludeOptimizer
             {
               dec.Header = header;
               declarations.Add(dec);
+              implIncludesToAdd.Add("#include "+ "\""+header+".h"+"\"");
             }
           }
         }
       }
-      this.includesToAdd = includesToAdd.ToArray();
+      this.headerIncludesToAdd = includesToAdd.ToArray();
+      this.implIncludesToAdd = implIncludesToAdd.ToArray();
       return declarations;
     }
         
