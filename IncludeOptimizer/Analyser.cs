@@ -54,8 +54,9 @@ namespace IncludeOptimizer
     
     public List<Declaration> Declarations { get ; set ; }
     public string[] IncludesToAdd { get => includesToAdd; set => includesToAdd = value; }
+    public OptimizationSettings OptimizationSettings { get => optimizationSettings; set => optimizationSettings = value; }
 
-    OptimizationSettings optimizationSettings;
+    OptimizationSettings optimizationSettings = new OptimizationSettings();
 
     public void Analyse(string filePath, OptimizationSettings optimizationSettings)
     {

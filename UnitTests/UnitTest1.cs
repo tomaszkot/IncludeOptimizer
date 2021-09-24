@@ -24,7 +24,7 @@ namespace UnitTests
       var analyser = new Analyser();
       analyser.Analyse(input);
       var applicator = new Applicator();
-      return applicator.ApplyToString(input, analyser, optimizationSettings, implFile);
+      return applicator.ApplyToString(input, analyser, implFile);
     }
 
     Declaration ParseCode(string code)
@@ -76,7 +76,7 @@ namespace UnitTests
       analyser.Analyse(header);
       
       var applicator = new Applicator();
-      var result = applicator.ApplyToString("m_person.foo();", analyser, optimizationSettings, true);
+      var result = applicator.ApplyToString("m_person.foo();", analyser, true);
       Assert.AreEqual(result, "m_person->foo();");
     }
 
