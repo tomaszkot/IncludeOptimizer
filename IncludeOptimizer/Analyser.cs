@@ -7,6 +7,11 @@ using System.Text.RegularExpressions;
 
 namespace IncludeOptimizer
 {
+  public class GroupEx
+  {
+    public Group Group { get;set;}
+    public string GroupName { get; set; }
+  }
 
   public class OptimizationSettings
   {
@@ -30,14 +35,29 @@ namespace IncludeOptimizer
     {
       return Body;
     }
+
+    public bool IsCollection { get { return CollectionType.Any(); } }
+    public string CollectionType { get; set; } = "";
+
+    public void SetPropsFromType()
+    {
+      var typeParts = Type.Split("::".ToCharArray());
+
+      Class = typeParts.Last().Trim();
+      Namespaces = typeParts.ToList();
+      Namespaces.Remove(Class);
+      while (Namespaces.Contains(""))
+        Namespaces.Remove("");
+    }
   }
 
   public class Analyser
   {
     public const string TypeDeclaration = @"(?<type>[\w:]+)\s+";
-    public const string MemberDeclarationRegex = TypeDeclaration+@"(?<memberName>\w+)\s*;";
+    public const string MemberDeclarationRegex = TypeDeclaration+@"(?<member_name>\w+)\s*;";
     public const string IncludeDeclarationRegexGTLT = @"\s*#include\s*<(?<type>.*)\s*>";
     public const string IncludeDeclarationRegexQuoted = "\\s*#include\\s*\"(?<type>.*)\\s*\"";
+    public const string ContainerMemberDeclarationRegex = @"(?<cont_type>\w+::\w+)<(?<type>.+)>\s(?<member_name>\w+\s*);";
 
     public string ResultsToString()
     {
@@ -50,6 +70,7 @@ namespace IncludeOptimizer
     string[] implIncludesToAdd = new string[0];
 
     List<string> knownHeaders = new List<string>() { "memory", "vector", "string", "set", "memory", "algorithm"};
+    List<string> knownContainers = new List<string>() {"vector", "set"};
 
     List<string> customHeaders = new List<string>();
     
@@ -84,30 +105,57 @@ namespace IncludeOptimizer
       Declarations = FindDeclarations(customHeaders);
     }
 
+    IList<GroupEx> GetGroups(Match match, Regex regex)
+    {
+      var groups = new List<GroupEx>();
+      for (int i = 0; i < match.Groups.Count; i++)
+      {
+        var gr = match.Groups[i];
+        var groupEx = new GroupEx() { Group = gr, GroupName = regex.GroupNameFromNumber(i) };// regex.GroupNameFromNumber(gr.Index) };
+        groups.Add(groupEx);
+      }
+
+      return groups;
+    }
+
+    IList<GroupEx> GetGroupMatches(string line, string regex)
+    {
+      IList<GroupEx> groups = new List<GroupEx>();
+      var regexObj = new Regex(regex);
+      var matches = regexObj.Matches(line);
+      if (matches.Count > 0)
+      {
+        groups = GetGroups(matches[0], regexObj);
+      }
+
+      return groups;
+    }
+
     public Declaration ParseMemberDeclaration(string declarationLine)
     {
-      var matches = Regex.Matches(declarationLine, MemberDeclarationRegex);
-      
       var decl = new Declaration();
       decl.Body = declarationLine;
       decl.Header = "";
+
+
+      var matches = Regex.Matches(declarationLine, MemberDeclarationRegex);
       if (matches.Count > 0)
       {
         if (matches[0].Groups.Count > 2)
         {
           decl.Type = matches[0].Groups[1].Value.Trim();
-
-          var typeParts = decl.Type.Split("::".ToCharArray());
-          
-          decl.Class = typeParts.Last().Trim();
-          decl.Namespaces = typeParts.ToList();
-          decl.Namespaces.Remove(decl.Class);
-          while(decl.Namespaces.Contains(""))
-            decl.Namespaces.Remove("");
-
           decl.MemberName = matches[0].Groups[2].Value.Trim();
         }
       }
+
+      var groups = GetGroupMatches(declarationLine, ContainerMemberDeclarationRegex);
+      if (groups.Any())
+      {
+        decl.MemberName = groups.Where(i=>i.GroupName == "member_name").FirstOrDefault().Group.Value;
+        decl.Type = groups.Where(i => i.GroupName == "type").FirstOrDefault().Group.Value;
+        decl.CollectionType = groups.Where(i => i.GroupName == "cont_type").FirstOrDefault().Group.Value;
+      }
+      decl.SetPropsFromType();
       return decl;
     }
 

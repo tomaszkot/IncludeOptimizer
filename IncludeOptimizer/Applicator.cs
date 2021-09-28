@@ -94,7 +94,10 @@ namespace IncludeOptimizer
             }
             var toReplace = " " + decl.Header + " ";
             var replacerKind = analyser.OptimizationSettings.UseSharedPtrs ? "std::shared_ptr" : "std::unique_ptr";
-            res = line.Replace(decl.Type, replacerKind + "<" + decl.Type + ">");
+            if (!decl.IsCollection)
+              res = line.Replace(decl.Type, replacerKind + "<" + decl.Type + ">");
+            else
+              res = replacerKind + "<" + decl.CollectionType+"<"+  decl.Type + ">> "+ decl.MemberName + ";";
 
             replaced = true;
             break;

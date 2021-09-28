@@ -100,6 +100,25 @@ namespace UnitTests
     }
 
     [TestMethod]
+    public void TestVectorToSharedPtrToVector()
+    {
+      string code = @"#include <Person>
+#include <vector>
+
+std::vector<BL::Person> m_persons;";
+      var result = Convert(code, false);
+
+      string expectedResult = @"#include <vector>
+#include <memory>
+namespace BL{class Person;};
+
+std::shared_ptr<std::vector<BL::Person>> m_persons;";
+
+      Assert.AreEqual(expectedResult, result);
+    }
+
+
+    [TestMethod]
     public void TestDeclaration_Replace()
     {
       string code = @"#include <Person>
