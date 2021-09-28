@@ -2,6 +2,6 @@
 1>------ Rebuild All started: Project: IncludeOptimizer, Configuration: Debug Any CPU ------
 Restored E:\Projects\IncludeOptimizer\IncludeOptimizer\IncludeOptimizer.csproj (in 8 ms).
 1>IncludeOptimizer -> E:\Projects\IncludeOptimizer\IncludeOptimizer\bin\Debug\netstandard2.0\IncludeOptimizer.dll
-2>------ Rebuild All started: Project: UnitTests, Configuration: Debug Any CPU ------
+2>------ Rebuild All started: Project: UnitTests, Conf iguration: Debug Any CPU ------
 2>  UnitTests -> E:\Projects\IncludeOptimizer\UnitTests\bin\Debug\UnitTests.dll
 ========== Rebuild All: 2 succeeded, 0 failed, 0 skipped ==========
