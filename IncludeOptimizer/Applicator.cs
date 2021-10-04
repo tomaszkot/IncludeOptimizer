@@ -11,15 +11,18 @@ namespace IncludeOptimizer
   {
     Analyser analyser;
     List<string> forwardDeclarations = new List<string>();
+    int currentLineIndex = 0;
+    int ctorIndex = 0;
 
     public string ApplyToString(string input, Analyser analyser, bool implFile)
     {
+      currentLineIndex = 0;
       this.analyser = analyser;
 
       var lines = input.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
       var result = new List<string>();
       int lastIncludeIndex = 0;
-      int index = 0;
+      
       var replaced = false;
       
       foreach (var line in lines)
@@ -39,18 +42,21 @@ namespace IncludeOptimizer
         var isInc = Analyser.IsIncludeLine(line);
         if (isInc && add)
         {
-          lastIncludeIndex = index;
+          lastIncludeIndex = currentLineIndex;
         }
-
-        index++;
+                
         if(add)
           result.Add(lineToAdd);
+
+        currentLineIndex++;
       }
 
       if (replaced)
       {
         if (implFile)
         {
+          if(collectionCreations.Any())
+            result.InsertRange(ctorIndex+2, collectionCreations);
           result.InsertRange(lastIncludeIndex, analyser.ImplIncludesToAdd);
         }
         else
@@ -93,11 +99,11 @@ namespace IncludeOptimizer
               break;
             }
             var toReplace = " " + decl.Header + " ";
-            var replacerKind = analyser.OptimizationSettings.UseSharedPtrs ? "std::shared_ptr" : "std::unique_ptr";
+            var replacerKind = GetReplacingPointer();
             if (!decl.IsCollection)
               res = line.Replace(decl.Type, replacerKind + "<" + decl.Type + ">");
             else
-              res = replacerKind + "<" + decl.CollectionType+"<"+  decl.Type + ">> "+ decl.MemberName + ";";
+              res = GetReplacer(decl, true) + decl.MemberName + ";";
 
             replaced = true;
             break;
@@ -110,14 +116,46 @@ namespace IncludeOptimizer
       return add;
     }
 
+    private string GetReplacingPointer()
+    {
+      return analyser.OptimizationSettings.UseSharedPtrs ? "std::shared_ptr" : "std::unique_ptr";
+    }
+
+    private string GetPointerCreation()
+    {
+      return analyser.OptimizationSettings.UseSharedPtrs ? "std::make_shared" : "std::make_unique";
+    }
+
+    public string GetReplacer(Declaration decl, bool definition)
+    {
+      var replacer = definition ? GetReplacingPointer() : GetPointerCreation();
+      return replacer + "<" + decl.CollectionType + "<" + decl.Type + ">> ";
+    }
+
+    List<string> collectionCreations = new List<string>();
     private string ApplyToImplFile(string line, ref bool replaced)
     {
       var res = "";
+      var collectionCreation = "";
       if (line.Trim().Any())
       {
         res = line;
+          
         foreach (var decl in analyser.Declarations)
         {
+          var isCtor = IsCtor(line, analyser.ClassName);
+          if (isCtor)
+          {
+            collectionCreation = decl.MemberName + " = " + GetReplacer(decl, false) + "();";
+            collectionCreations.Add(collectionCreation);
+            ctorIndex = currentLineIndex;
+          }
+          //else if (collectionCreation.Any())
+          //{
+          //  line += collectionCreation;
+          //  collectionCreation = "";
+          //}
+
           if (line.Contains(decl.MemberName + "."))
           {
             res = ConvertMemberUsage(decl.MemberName, res);
@@ -127,6 +165,11 @@ namespace IncludeOptimizer
       }
 
       return res;
+    }
+
+    bool IsCtor(string line, string type)
+    {
+      return line.Contains(type+"::"+ type);
     }
 
     public void Apply(string inputFilePath, string outputFilePath, Analyser analyser, OptimizationSettings optimizationSettings)

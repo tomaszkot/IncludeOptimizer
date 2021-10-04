@@ -58,12 +58,15 @@ namespace IncludeOptimizer
     public const string IncludeDeclarationRegexGTLT = @"\s*#include\s*<(?<type>.*)\s*>";
     public const string IncludeDeclarationRegexQuoted = "\\s*#include\\s*\"(?<type>.*)\\s*\"";
     public const string ContainerMemberDeclarationRegex = @"(?<cont_type>\w+::\w+)<(?<type>.+)>\s(?<member_name>\w+\s*);";
+    public const string ClassDeclarationRegexBase = @"(?<type_kind>class)\s+((?<export>\w*)\s)*(?<class_name>\w+)\s*";
+    public const string ClassDeclarationRegexClousure = ClassDeclarationRegexBase+"{";
 
     public string ResultsToString()
     {
       return string.Join("\r\n", Declarations.Select(i => i.ToString()));
     }
 
+    public string ClassName { get; set; }
     string fileContent;
     string[] splittedFileContent;
     string[] headerIncludesToAdd = new string[0];
@@ -176,12 +179,21 @@ namespace IncludeOptimizer
           var isInc = IsIncludeLine(line);
           if (isInc && line.Contains("<memory>"))
             includesToAdd.Remove("memory");
-          if (!isInc && !IsClassDefLine(line) && line.Contains(header))
+
+          var groupsClousure = GetGroupMatches(line, ClassDeclarationRegexClousure);
+          var groupsBase = GetGroupMatches(line, ClassDeclarationRegexBase);
+          if (groupsBase.Any() || groupsClousure.Any())
+          {
+            ClassName = groupsBase.Where(i => i.GroupName == "class_name").FirstOrDefault().Group.Value;
+          }
+
+          if (!isInc && !IsClassDefLine(line) && line.Contains(header))//TODO
           {
             var dec = ParseMemberDeclaration(line);
             if (!string.IsNullOrEmpty(dec.Type))
             {
               dec.Header = header;
+              
               declarations.Add(dec);
               
               implIncludesToAdd.Add("#include "+ "\""+header+".h"+"\"");

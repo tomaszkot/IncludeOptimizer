@@ -146,6 +146,7 @@
     <ClCompile Include="Input\Person.cpp" />
     <ClCompile Include="Input\SteeringWheel.cpp" />
     <ClCompile Include="Output\Car.cpp" />
+    <ClCompile Include="Output\Company.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Output\app.h" />
@@ -154,6 +155,7 @@
     <ClInclude Include="Input\Person.h" />
     <ClInclude Include="Input\SteeringWheel.h" />
     <ClInclude Include="Output\Car.h" />
+    <ClInclude Include="Output\Company.h" />
     <ClInclude Include="Output\SteeringWheel.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
