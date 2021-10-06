@@ -8,7 +8,7 @@ int main()
 {
     std::cout << "Hello World!\n";
     app app;
-    int count = app.m_comp.count();
-    std::cout << count;
+    //int count = app.m_comp.count();
+    //std::cout << count;
     //InstType instType;
 }

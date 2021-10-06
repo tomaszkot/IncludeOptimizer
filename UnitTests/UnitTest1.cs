@@ -158,5 +158,66 @@ std::shared_ptr<BL::Boss> m_boss; ";
 
       Assert.AreEqual(expectedResult, result);
     }
+
+    [TestMethod]
+    public void TestDeclaration_ObjectAndCollection()
+    {
+      string code = @"#include <Person>
+std::vector<BL::Person> m_persons;
+BL::Person m_boss;";
+      var decls = GetDeclarations(code, 2);
+      Assert.AreEqual(decls[0].MemberName, "m_persons");
+      Assert.AreEqual(decls[0].Type, "BL::Person");
+      Assert.AreEqual(decls[0].Class, "Person");
+
+      Assert.AreEqual(decls[1].MemberName, "m_boss");
+      Assert.AreEqual(decls[1].Type, "BL::Person");
+      Assert.AreEqual(decls[1].Class, "Person");
+
+      var result = Convert(code, false);
+
+      string expectedResult = @"#include <memory>
+namespace BL{class Person;};
+std::shared_ptr<std::vector<BL::Person>> m_persons;
+std::shared_ptr<BL::Person> m_boss;";
+
+      Assert.AreEqual(expectedResult, result);
+    }
+
+    [TestMethod]
+    public void TestDeclaration_ObjectAndCollectionCppFile()
+    {
+      string code = @"#include ""Person.h""
+class Company
+{
+std::vector<BL::Person> m_persons;
+BL::Person m_boss;
+}";
+      
+      var optimizationSettings = new OptimizationSettings();
+      var analyser = new Analyser();
+      analyser.Analyse(code);
+      var applicator = new Applicator();
+
+      var cppCode = @"#include <Company>
+Company::Company()
+{
+m_persons.push_back({});
+m_boss.foo();
+}";
+      var result = applicator.ApplyToString(cppCode, analyser, true);
+
+      string expCppCode = @"#include ""Person.h""
+#include <Company>
+Company::Company()
+{
+m_persons = std::make_shared<std::vector<BL::Person>>();
+m_boss = std::make_shared<BL::Person>();
+m_persons->push_back({});
+m_boss->foo();
+}";
+
+      Assert.AreEqual(expCppCode, result);
+    }
   }
 }

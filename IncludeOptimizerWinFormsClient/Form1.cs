@@ -25,13 +25,15 @@ namespace IncludeOptimizerWinFormsClient
 
       //var filePath = @"F:\repos\IncludeOptimizer\IncludeOptimizerTestApp\InstType.h";
       //var fileName = "Car.h";
-      var fileName = "Company.h";
+      var fileName = FileNameCb.SelectedItem + ".h";
       var filePathBase = @"F:\repos\IncludeOptimizer\IncludeOptimizerTestApp\";
       var inputFilePath = filePathBase+"/Input/";
       inputFilePath += fileName;
       var outputFilePath = filePathBase + "/Output/"+ fileName;
       //var filePath = @"F:\repos\IncludeOptimizer\IncludeOptimizerTestApp\ScriptParameterBL.h";
       var optimizationSettings = new OptimizationSettings();
+
+      //only h file
       analyser.Analyse(inputFilePath, optimizationSettings);
       string res = analyser.ResultsToString();
       //var save = MessageBox.Show(res, "Save Converted File ?", MessageBoxButtons.YesNo);
@@ -41,6 +43,11 @@ namespace IncludeOptimizerWinFormsClient
         applicator.Apply(inputFilePath, outputFilePath, analyser, optimizationSettings);
         Debug.Assert(analyser.Declarations.Count > 0);
       }
+    }
+
+    private void IncludeOptimizerForm_Load(object sender, EventArgs e)
+    {
+      FileNameCb.SelectedIndex = 0;
     }
   }
 }

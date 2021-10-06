@@ -7,6 +7,7 @@ namespace BL{class Person;};
 class Company
 {
 std::shared_ptr<std::vector<BL::Person>> m_persons;
+  std::shared_ptr<BL::Person> m_boss;
 
 public:
   Company();
